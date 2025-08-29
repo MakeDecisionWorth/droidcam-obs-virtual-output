@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "queue.h"
 #include "structs.h"
 
-#if DROIDCAM_OVERRIDE==0
+#if !DROIDCAM_OVERRIDE
 
 #if LIBOBS_API_MAJOR_VER==28
 #include <QtGui/QAction>
@@ -43,12 +43,12 @@ const char *PluginName = "DroidCam Virtual Output";
 obs_output_t *droidcam_virtual_output = NULL;
 config_t *obs_config = NULL;
 
-void map_yuv420_yuyv(uint8_t** data, uint32_t *linesize, uint8_t* dst,
-    int shift_x, int shift_y, int is_aligned_128b,
-    const int dest_width, const int dest_height,
-    const int width, const int height);
+extern "C" {
+void map_yuv420_yuyv(uint8_t **data, uint32_t *linesize, uint8_t *dst, int shift_x, int shift_y, int is_aligned_128b,
+		     const int dest_width, const int dest_height, const int width, const int height);
 
-void clear_yuyv(uint8_t* dst, int size, int color);
+void clear_yuyv(uint8_t *dst, int size, int color);
+}
 
 struct droidcam_output_plugin {
     // video
@@ -395,7 +395,7 @@ static bool output_start(void *data) {
     obs_output_set_video_conversion(plugin->output, &plugin->video_conv);
 
     audio_t *audio = obs_output_audio(plugin->output);
-    int channels = audio_output_get_channels(audio);
+    int channels = (int) audio_output_get_channels(audio);
     int sample_rate = (int) audio_output_get_sample_rate(audio);
     dlog("            : audio channels %d sample_rate %d", channels, sample_rate);
 

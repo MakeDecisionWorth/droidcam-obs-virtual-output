@@ -54,6 +54,9 @@ void map_yuv420_yuyv(uint8_t** data, uint32_t *linesize, uint8_t* dst,
     if (is_aligned_128b)
     {
         for (int y = 0; y < (height>>1); ++y) {
+#ifdef CONVERT_ROW
+#undef CONVERT_ROW
+#endif
             #define CONVERT_ROW \
             if (shift_x) dst += shift_x; \
             for (int x = 0; x < width; x += 16) {        \
@@ -88,6 +91,9 @@ void map_yuv420_yuyv(uint8_t** data, uint32_t *linesize, uint8_t* dst,
     #endif
 
     for (int y = 0; y < (height>>1); y++) {
+#ifdef CONVERT_ROW
+#undef CONVERT_ROW
+#endif
         #define CONVERT_ROW \
         if (shift_x) dst += shift_x; \
         for (int x = 0; x < (width>>1); x++) { \
